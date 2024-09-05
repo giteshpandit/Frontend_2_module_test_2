@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Employees</h1>
+
+        <!-- Form for adding employees -->
+        <form id="employeeForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label for="profession">Profession:</label>
+                <input type="text" id="profession" placeholder="Enter profession">
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" placeholder="Enter age">
+            </div>
+            <button type="button" id="addEmployeeBtn">Add Employee</button>
+        </form>
+
+        <!-- Message container for success and error -->
+        <div id="message" class="message"></div>
+
+        <!-- Added Employees Section -->
+        <h2>Added Employees</h2>
+        <div id="employeeList"></div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
+
+----CSS styling---
+
+
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    display: none;
+}
+
+.message.error {
+    color: red;
+    background-color: #fdd;
+}
+
+.message.success {
+    color: green;
+    background-color: #dfd;
+}
+
+.employee {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.employee p {
+    margin: 0;
+}
+
+.delete-btn {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #ff4c29;
+}
+
+-----JS Field------
+
+
+// scripts.js
+
+let employees = [];
+let idCounter = 1;
+
+const form = document.getElementById('employeeForm');
+const messageDiv = document.getElementById('message');
+const employeeListDiv = document.getElementById('employeeList');
+const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+
+// Function to show messages
+function showMessage(message, type) {
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = 'block';
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 3000);
+}
+
+// Function to render the employee list
+function renderEmployees() {
+    employeeListDiv.innerHTML = '';
+    if (employees.length === 0) {
+        employeeListDiv.textContent = 'No employees added yet.';
+    } else {
+        employees.forEach(employee => {
+            const employeeDiv = document.createElement('div');
+            employeeDiv.className = 'employee';
+            employeeDiv.innerHTML = `
+                <p>ID: ${employee.id} | Name: ${employee.name} | Profession: ${employee.profession} | Age: ${employee.age}</p>
+                <button class="delete-btn" onclick="deleteEmployee(${employee.id})">Delete</button>
+            `;
+            employeeListDiv.appendChild(employeeDiv);
+        });
+    }
+}
+
+// Function to add an employee
+function addEmployee() {
+    const name = document.getElementById('name').value;
+    const profession = document.getElementById('profession').value;
+    const age = document.getElementById('age').value;
+
+    // Validate the form inputs
+    if (name === '' || profession === '' || age === '') {
+        showMessage('All fields are required.', 'error');
+        return;
+    }
+
+    // Create employee object and add it to the array
+    const newEmployee = {
+        id: idCounter++,
+        name: name,
+        profession: profession,
+        age: parseInt(age),
+    };
+    employees.push(newEmployee);
+
+    // Show success message
+    showMessage('Employee added successfully!', 'success');
+
+    // Clear form fields
+    document.getElementById('name').value = '';
+    document.getElementById('profession').value = '';
+    document.getElementById('age').value = '';
+
+    // Render the updated employee list
+    renderEmployees();
+}
+
+// Function to delete an employee
+function deleteEmployee(id) {
+    employees = employees.filter(employee => employee.id !== id);
+    renderEmployees();
+}
+
+// Event listener for the Add Employee button
+addEmployeeBtn.addEventListener('click', addEmployee);
+
+// Initialize with 0 employees
+renderEmployees();
+
+
+
+
